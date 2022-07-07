@@ -1,0 +1,49 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+struct Sphere
+{
+    float radius;
+    float3 position;
+    float speed;
+    float3 direction;
+    float4 color;
+    int aux;
+};
+
+float4 minWorld;
+float4 maxWorld;
+int dElements;
+float deltaTime;
+int interactions;
+
+RWStructuredBuffer<Sphere> dynamicSphere;
+
+float rand(float2 co) {
+    return (frac(sin(dot(co.xy, float2(12.9898, 78233))) * 43758.5453)) * 1;
+}
+
+[numthreads(10,1,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    if (id.x < dElements) {
+        Sphere ds = dynamicSphere[id.x];
+        ds.position += ds.direction * ds.speed * deltaTime;
+        if (ds.position.y - ds.radius < minWorld.y) {
+
+            ds.speed = 0;
+
+            for (int i = 0; i < interactions; i++) {
+                float _r = rand(float2(ds.color.r, ds.color.g));
+                float _g = rand(float2(ds.color.g, ds.color.b));
+                float _b = rand(float2(ds.color.r, ds.color.b));
+                ds.color = float4(_r, _g, _b, 1);
+                ds.aux++;
+
+            }
+           
+        }
+
+        dynamicSphere[id.x] = ds;
+    }
+}
