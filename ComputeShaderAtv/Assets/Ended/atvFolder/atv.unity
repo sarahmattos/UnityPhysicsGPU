@@ -381,7 +381,7 @@ MonoBehaviour:
   dynamicSphereRadiusMax: 1
   minSpace: {x: -60, y: -8, z: -30}
   maxSpace: {x: 60, y: 30, z: 30}
-  interactions: 100
+  interactions: 1
   minSpeed: 5
   maxSpeed: 10
   minMass: 10
