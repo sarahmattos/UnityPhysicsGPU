@@ -146,11 +146,11 @@ public class AtvMain1 : MonoBehaviour
         for (int i = 0; i < bufferDynamicSpheres.Length; i++)
         {
             dynamicSpheres[i].position = bufferDynamicSpheres[i].position;
-            if (bufferDynamicSpheres[i].aux==2)
+            if (bufferDynamicSpheres[i].aux == 2)
             {
                 dynamicSpheres[i].GetComponent<Renderer>().material.SetColor("_Color", bufferDynamicSpheres[i].color);
             }
-           
+
         }
 
     }

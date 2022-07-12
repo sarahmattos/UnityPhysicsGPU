@@ -386,7 +386,7 @@ MonoBehaviour:
   maxSpeed: 10
   minMass: 10
   maxMass: 20
-  numParticles: 1000
+  numParticles: 4000
   useGPU: 1
   computeShader: {fileID: 7200000, guid: 6b1b873d8b374c340b585ddc30abc193, type: 3}
 --- !u!1 &1457411082

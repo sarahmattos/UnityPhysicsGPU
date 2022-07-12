@@ -27,8 +27,8 @@ float rand(float2 co) {
     return (frac(sin(dot(co.xy, float2(12.9898, 78233))) * 43758.5453)) * 1;
 }
 
-[numthreads(10,1,1)]
-void CSMain (uint3 id : SV_DispatchThreadID)
+[numthreads(10, 1, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
 {
     if (id.x < dElements) {
         Sphere ds = dynamicSphere[id.x];
@@ -37,7 +37,7 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 
         if (ds.position.y - ds.radius > minWorld.y) {
             float V2 = ds.V + (F / ds.mass) * deltaTime;
-            P = ds.direction * V2 * deltaTime;
+            P += ds.direction * V2 * deltaTime;
             ds.position += P;
         }
 
@@ -52,7 +52,7 @@ void CSMain (uint3 id : SV_DispatchThreadID)
                 ds.aux++;
 
             }
-           
+
         }
 
         dynamicSphere[id.x] = ds;
