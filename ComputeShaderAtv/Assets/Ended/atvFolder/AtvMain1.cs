@@ -15,6 +15,8 @@ public class AtvMain1 : MonoBehaviour
 
     public float minSpeed = 10;
     public float maxSpeed = 20;
+    public float minMass = 10;
+    public float maxMass = 20;
     public int numParticles = 10;
     public bool useGPU = true;
 
@@ -26,7 +28,8 @@ public class AtvMain1 : MonoBehaviour
     {
         public float radius;
         public Vector3 position;
-        public float speed;
+        public float V;
+        public float mass;
         public Vector3 direction;
         public Color color;
         public int aux;
@@ -52,7 +55,8 @@ public class AtvMain1 : MonoBehaviour
             float radius = Random.Range(dynamicSphereRadiusMin, dynamicSphereRadiusMax);
             bufferDynamicSpheres[i] = new Sphere();
             bufferDynamicSpheres[i].radius = radius;
-            bufferDynamicSpheres[i].speed = Random.Range(minSpeed, maxSpeed);
+            bufferDynamicSpheres[i].V = Random.Range(minSpeed, maxSpeed);
+            bufferDynamicSpheres[i].mass = Random.Range(minMass, maxMass);
             bufferDynamicSpheres[i].position = dynamicSpheres[i].position;
             bufferDynamicSpheres[i].color = _colorInic;
             bufferDynamicSpheres[i].aux = 1;
@@ -64,7 +68,7 @@ public class AtvMain1 : MonoBehaviour
 
         if (useGPU)
         {
-            int totalsize = sizeof(float) * 2 + sizeof(float) * 6 + sizeof(float) * 4 + sizeof(int);
+            int totalsize = sizeof(float) * 3 + sizeof(float) * 6 + sizeof(float) * 4 + sizeof(int);
 
             cbDynamicSphere = new ComputeBuffer(bufferDynamicSpheres.Length, totalsize);
             cbDynamicSphere.SetData(bufferDynamicSpheres);
@@ -86,7 +90,12 @@ public class AtvMain1 : MonoBehaviour
         {
             GPUSim();
         }
-        
+        else
+        {
+            // Perform the simulation in CPU
+            CPUSim();
+        }
+
         totalTime += Time.realtimeSinceStartup - begin;
         currentInteraction++;
 
@@ -98,7 +107,35 @@ public class AtvMain1 : MonoBehaviour
 
     }
 
-   
+
+    private void CPUSim()
+    {
+        for (int i = 0; i < dynamicSpheres.Length; i++)
+        {
+            Transform _ds = dynamicSpheres[i];
+
+            float aceleration = 9.8f;
+            float F = bufferDynamicSpheres[i].mass * aceleration;
+
+            if (_ds.position.y - bufferDynamicSpheres[i].radius > minSpace.y)
+            {
+                _ds.Translate(new Vector3(0, 0, (bufferDynamicSpheres[i].V + (F / bufferDynamicSpheres[i].mass) * Time.deltaTime) * Time.deltaTime));
+            }
+            //Debug.Log(bufferDynamicSpheres[i].aux);
+            if (_ds.position.y - bufferDynamicSpheres[i].radius < minSpace.y && bufferDynamicSpheres[i].aux < 2)
+            {
+                bufferDynamicSpheres[i].color = Random.ColorHSV();
+                dynamicSpheres[i].GetComponent<Renderer>().material.SetColor("_Color", bufferDynamicSpheres[i].color);
+                bufferDynamicSpheres[i].aux++;
+
+
+            }
+        }
+
+    }
+
+
+
     private void GPUSim()
     {
         computeShader.SetFloat("deltaTime", Time.deltaTime);

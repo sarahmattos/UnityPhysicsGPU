@@ -381,10 +381,12 @@ MonoBehaviour:
   dynamicSphereRadiusMax: 1
   minSpace: {x: -60, y: -8, z: -30}
   maxSpace: {x: 60, y: 30, z: 30}
-  interactions: 1
+  interactions: 100
   minSpeed: 5
   maxSpeed: 10
-  numParticles: 200
+  minMass: 10
+  maxMass: 20
+  numParticles: 1000
   useGPU: 1
   computeShader: {fileID: 7200000, guid: 6b1b873d8b374c340b585ddc30abc193, type: 3}
 --- !u!1 &1457411082
@@ -414,8 +416,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1457411082}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.4616, y: 0.81847525, z: -0.8803}
-  m_LocalScale: {x: 12.150603, y: 1, z: 6.1714125}
+  m_LocalPosition: {x: -1.4616, y: 0.8185, z: 31.8652}
+  m_LocalScale: {x: 12.150603, y: 1, z: -28.881754}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 716164709}

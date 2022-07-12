@@ -5,7 +5,8 @@ struct Sphere
 {
     float radius;
     float3 position;
-    float speed;
+    float V;
+    float mass;
     float3 direction;
     float4 color;
     int aux;
@@ -16,6 +17,9 @@ float4 maxWorld;
 int dElements;
 float deltaTime;
 int interactions;
+float aceleration;
+float F;
+float3 P;
 
 RWStructuredBuffer<Sphere> dynamicSphere;
 
@@ -28,10 +32,17 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 {
     if (id.x < dElements) {
         Sphere ds = dynamicSphere[id.x];
-        ds.position += ds.direction * ds.speed * deltaTime;
+        aceleration = 9.8f;
+        F = ds.mass * aceleration;
+
+        if (ds.position.y - ds.radius > minWorld.y) {
+            float V2 = ds.V + (F / ds.mass) * deltaTime;
+            P = ds.direction * V2 * deltaTime;
+            ds.position += P;
+        }
+
         if (ds.position.y - ds.radius < minWorld.y) {
 
-            ds.speed = 0;
 
             for (int i = 0; i < interactions; i++) {
                 float _r = rand(float2(ds.color.r, ds.color.g));
